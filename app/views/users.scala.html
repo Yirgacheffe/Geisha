@@ -1,0 +1,44 @@
+@( message: String )( users: Seq[User] )
+
+@import models.User
+
+@main( "User List" ) {
+
+<h1>@message</h1>
+
+<div style="margin-left:2" >
+<style>
+    li.item span { width: 100px, display: inline-block; }
+</style>
+
+<table border="1">
+<tr>
+    <th>Id</th>
+    <th>Email</th>
+    <th>Name</th>
+    <th>Phone</th>
+    <th>Gender</th>
+    <th>Facebook</th>
+    <th>Twitter</th>
+    <th>LinkedIn</th>
+    <th>Wechat</th>
+    <th>Operation</th>
+</tr>
+@users.map { user =>
+    <tr>
+        <td>@user.id</td>
+        <td>@user.email</td>
+        <td>@user.name</td>
+        <td>@user.phone</td>
+        <td>@user.gender</td>
+        <td>@user.facebook</td>
+        <td>@user.twitter</td>
+        <td>@user.linkedIn</td>
+        <td>@user.wechat</td>
+        <td><a href="/users/@user.id/del">Delete</a></td>
+    </tr>
+}
+</table>
+
+</div>
+}

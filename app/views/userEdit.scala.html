@@ -1,0 +1,27 @@
+@( message: String )( id: Int)( user: Form[UserData] )( implicit messages: Messages )
+
+@import helper._
+
+@main( "Edit User" ) {
+
+<h1>@message</h1>
+
+<ul id="user"></ul>
+    @form( routes.UserController.edit( id ) ) {
+
+        @inputText( user("email")     )
+        @inputText( user("password")  )
+        @inputText( user("phone")     )
+        @inputText( user("name")      )
+        @inputText( user("gender")    )
+        @inputText( user("facebook")  )
+        @inputText( user("twitter")   )
+        @inputText( user("linkedIn")  )
+        @inputText( user("wechat")    )
+
+        <div class="buttons">
+            <input type="submit" value="Edit Person"/>
+        </div>
+    }
+
+}

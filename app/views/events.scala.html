@@ -1,0 +1,17 @@
+@( message: String )( events: Seq[Event] )
+
+@import models.Event
+
+@main( "Event List" ) {
+<h1>@message</h1>
+<div style="margin-left:2" >
+    <style>
+        li.item span { width: 100px, display: inline-block; }
+    </style>
+    <ul>
+        @events.map { event =>
+        <li class="item"><span>@event.title</span><span>&nbsp</span><span>@event.startTime</span><span>&@event.closeTime</span></li>
+        }
+    </ul>
+</div>
+}
