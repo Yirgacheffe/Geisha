@@ -10,7 +10,7 @@ GET         /                           controllers.UserController.list( page: I
 
 # User module
 GET         /users                      controllers.UserController.list( page: Int ?= 1 )
-GET         /users/:id                  controllers.UserController.show(id: Int)
+GET         /users/$id<[0-9]+>          controllers.UserController.show(id: Int)
 
 GET         /users/showCreate           controllers.UserController.showCreate
 POST        /users                      controllers.UserController.create
@@ -18,7 +18,7 @@ POST        /users                      controllers.UserController.create
 GET         /users/:id/showEdit         controllers.UserController.showEdit(id: Int)
 POST        /users/:id                  controllers.UserController.edit(id: Int)
 
-GET         /users/:id/del              controllers.UserController.delete(id: Int)
+GET         /users/:id/delete           controllers.UserController.delete(id: Int)
 
 # Event module
 GET         /events                     controllers.EventController.list(page: Int ?= 1)

@@ -23,7 +23,7 @@ class GenericRepository[T] @Inject()( dbConfigProvider: DatabaseConfigProvider )
   import dbConfig._
   import driver.api._
 
-  val tables = TableQuery[T]
+  // val tables = TableQuery[T]
 
 
 

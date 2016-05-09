@@ -3,8 +3,8 @@ package dal
 
 import javax.inject.{ Inject, Singleton }
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext
+import scala.concurrent._
+import scala.concurrent.duration._
 
 import slick.driver.JdbcProfile
 import play.api.db.slick.DatabaseConfigProvider
@@ -29,6 +29,10 @@ class UserRepository @Inject() ( dbConfigProvider: DatabaseConfigProvider ) ( im
   import driver.api._ // dbConfig.driver.api._
 
   private val users = TableQuery[Users]
+
+  // Temprary put here...
+  def exec[T]( action: DBIO[T] ) : T = Await.result( db.run(action), 2 seconds )
+  def close() = db.close()
 
 
   def list() : Future[Seq[User]] = db.run {

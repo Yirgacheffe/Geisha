@@ -11,9 +11,12 @@
     li.item span { width: 100px, display: inline-block; }
 </style>
 
+    <span>
+        <a href="/users/showCreate">New</a>
+    </span>
+
 <table border="1">
 <tr>
-    <th>Id</th>
     <th>Email</th>
     <th>Name</th>
     <th>Phone</th>
@@ -22,12 +25,13 @@
     <th>Twitter</th>
     <th>LinkedIn</th>
     <th>Wechat</th>
+    <th>Created</th>
+    <td>Updated</td>
     <th>Operation</th>
 </tr>
 @users.map { user =>
     <tr>
-        <td>@user.id</td>
-        <td>@user.email</td>
+        <td><a href="/users/@user.id">@user.email</a></td>
         <td>@user.name</td>
         <td>@user.phone</td>
         <td>@user.gender</td>
@@ -35,7 +39,12 @@
         <td>@user.twitter</td>
         <td>@user.linkedIn</td>
         <td>@user.wechat</td>
-        <td><a href="/users/@user.id/del">Delete</a></td>
+        <td>@user.registered</td>
+        <td>@user.updated</td>
+        <td>
+            <a href="/users/@user.id/delete">Delete</a>
+            <a href="/users/@user.id/showEdit">Edit</a>
+        </td>
     </tr>
 }
 </table>
