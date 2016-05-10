@@ -3,11 +3,12 @@ package models
 
 import slick.driver.MySQLDriver.api._
 
+
 /**
-  * Database column type related to data type 'Gender' in 'Users' like table
-  *
-  * @version 1.0 $ 2016-02-28 18:27:27 $
-  */
+ * Database column type related to data type 'Gender' in 'Users' like table
+ *
+ * @version 1.0 $ 2016-02-28 18:27:27 $
+ */
 sealed abstract class Gender( val abbr: Char )
 
 object Gender {

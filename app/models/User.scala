@@ -9,9 +9,10 @@ import java.sql.Timestamp
  *
  * @version 1.0.0 $ 2016-04-27 00:02 $
  */
-case class User( id: Int = 0, email: String, password: String, phone: String, name: String,
+case class User( id: Option[Int] = None, email: String, password: String, phone: Option[String],
+  name:     Option[String],
   gender:   Gender,
   facebook: Option[String],
   twitter:  Option[String],
   linkedIn: Option[String],
-  wechat:   Option[String], registered: Timestamp, updated: Timestamp )
+  wechat:   Option[String], created: Timestamp, updated: Timestamp )

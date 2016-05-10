@@ -20,12 +20,10 @@ import dal.UserRepository
  *
  * @version 1.0.0 $ 2016-04-26 22:46 $
  */
-case class UserData( email: String, password: String, phone: String, name: String,
-  gender:   Char,
-  facebook: String,
-  twitter:  String,
-  linkedIn: String, wechat: String )
-
+case class UserData( email: String, password: String, phone: String, name: String, gender: Char,
+                     facebook: String,
+                     twitter:  String,
+                     linkedIn: String, wechat: String )
 
 class UserController @Inject() ( val repo: UserRepository, val messagesApi: MessagesApi )
                                ( implicit ec: ExecutionContext ) extends Controller with I18nSupport {
@@ -46,16 +44,20 @@ class UserController @Inject() ( val repo: UserRepository, val messagesApi: Mess
   }
 
 
-  def list( page: Int = 1 ) = Action.async {
-    repo.list().map {
-      case users: Seq[User] => Ok( views.html.users( "It works" )( users ) )
+  /**
+   * Show single user by id
+   */
+  def show( id: Int ) = Action.async {
+    repo.findById( id ).map {
+      case user: User => Ok( views.html.user( "It works" )( user ) )
+      case None       => Ok( views.html.error( "User with id can not found" ) )
     }
   }
 
 
-  def show( id: Int ) = Action.async {
-    repo.show( id ).map {
-      case user: User => Ok( views.html.user( "It works" )( user ) )
+  def list( page: Int = 1 ) = Action.async {
+    repo.listByPage( page ).map {
+      case users: Seq[User] => Ok( views.html.users( "It works" )( users ) )
     }
   }
 
@@ -70,7 +72,7 @@ class UserController @Inject() ( val repo: UserRepository, val messagesApi: Mess
     userForm.bindFromRequest.fold (
 
       errorForm => {
-        Future.successful( Ok( views.html.userCreate( "With errors" )( errorForm )) )
+        Future.successful( Ok(views.html.userCreate("With errors")(errorForm)) )
       },
       u => { // u is UserData
         repo.create( u.email, u.password,
@@ -90,7 +92,9 @@ class UserController @Inject() ( val repo: UserRepository, val messagesApi: Mess
 
   def showEdit( id: Int ) = Action.async {
 
-    repo.show( id ).map { case user: User => {
+    repo.findById( id ).map {
+      case user: User => {
+
         val userData = UserData(
           user.email,
           user.password,
@@ -102,10 +106,12 @@ class UserController @Inject() ( val repo: UserRepository, val messagesApi: Mess
           user.linkedIn.getOrElse(""),
           user.wechat.getOrElse("")
         )
-        val editForm = userForm.fill( userData )
 
+        val editForm = userForm.fill( userData )
         Ok( views.html.userEdit( "It works" )( user.id )( editForm ) )
+
       }
+      case None => Ok( views.html.error( "User with id can not edit" ) )
     }
 
   }
@@ -133,6 +139,5 @@ class UserController @Inject() ( val repo: UserRepository, val messagesApi: Mess
   def delete( id: Int ) = Action {
     Redirect( routes.UserController.list() )
   }
-
 
 } //:~
