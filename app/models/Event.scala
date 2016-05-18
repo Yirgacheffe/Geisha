@@ -9,9 +9,8 @@ import java.sql.Timestamp
  *
  * @version 1.0.0 $ 2016-04-27 13:03 $
  */
-case class Event( id: Int = 0,  title: String, startTime: Timestamp, closeTime: Timestamp,
+case class Event( id: Option[Int] = None, title: String,
+  startTime: Timestamp,
+  closeTime: Timestamp,
   location : String,
-  summary  : String,
-  cost     : Int,
-  category : Int,
-  organizer: Int, creator: Int, createdTime: Timestamp, updatedTime: Timestamp )
+  summary  : String, cost: Int, category: Int, organizer: Int, creator: Int )

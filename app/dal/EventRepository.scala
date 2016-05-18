@@ -2,13 +2,17 @@
 package dal
 
 import javax.inject.{ Inject, Singleton }
+
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
+
 import slick.driver.JdbcProfile
 import play.api.db.slick.DatabaseConfigProvider
 
-import scala.concurrent.{ Future, ExecutionContext }
-
 import models.Event
-import tables.Events
+import models.User
+
+import tables.{ Events, Users }
 
 
 /**
@@ -17,23 +21,37 @@ import tables.Events
  * @version 1.0.0 $ 2016-04-27 17:26 $
  */
 @Singleton
-class EventRepository @Inject() ( val dbConfigProvider: DatabaseConfigProvider ) (implicit ec: ExecutionContext) {
+class EventRepository @Inject()( dbConfigProvider: DatabaseConfigProvider )( implicit ec: ExecutionContext ) {
+
 
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import driver.api._
 
+  private val events = TableQuery[ Events ]
+  private val users  = TableQuery[ Users  ]
 
-  private val events = TableQuery[Events]
 
-  def list() : Future[Seq[Event]] = db.run {
-    events.result
+  private def eventsTableAutoInc = events returning events.map( _.id )
+
+  def findById( id: Int ) : Future[Option[Event]] = db.run {
+    events.filter( _.id === id ).result.headOption
   }
 
-  def show( id: Int ) : Future[Event] = db.run {
-    events.filter( _.id === id ).result.head
+
+  def findByIdWithUser( id: Int ) : Future[Option[(Event, User)]] = {
+    val q = for {
+      e <- events
+      u <- users
+      if e.creator === u.id
+    } yield ( e, u )
+
+    db.run {
+      q.result.headOption  // Get event join with user, yield event and user name
+    }
   }
+
 
 
 } //:~

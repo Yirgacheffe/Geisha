@@ -17,13 +17,22 @@ import dal.EventRepository
  *
  * @version 1.0.0 $ 2016-04-27 22:55 $
  */
-class EventController @Inject() ( val repo: EventRepository, val messagesApi: MessagesApi )
+class EventController @Inject() ( val eventDal: EventRepository, val messagesApi: MessagesApi )
                                 ( implicit ec: ExecutionContext ) extends Controller with I18nSupport {
 
-
+/*
   def list( page: Int = 1 ) = Action.async {
     repo.list().map {
       case events: Seq[Event] => Ok( views.html.events( "event list" )( events ) )
+    }
+  }
+*/
+
+
+  def show( id: Int ) = Action.async {
+    eventDal.findByIdWithUser( id ).map {
+      case Some( (e, u) ) => Ok( views.html.event(e)(u) )
+      case None           => Ok( views.html.error( "Can not found event" ) )
     }
   }
 

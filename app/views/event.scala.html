@@ -1,0 +1,26 @@
+@( event: Event )( user: User)
+@import models.{ Event, User }
+
+@main( "event details" ) {
+
+<div>
+    <style>
+        li.item span { width: 100px, display: inline-block; }
+    </style>
+    <ul>
+        <li class="item">@event.id</li>
+        <li class="item">@event.title</li>
+        <li class="item">@event.startTime</li>
+        <li class="item">@event.closeTime</li>
+        <li class="item">@event.location</li>
+        <li class="item">@event.summary</li>
+        <li class="item">@event.cost</li>
+        <li class="item">@event.category</li>
+        <li class="item">@event.organizer</li>
+        <li class="item">@event.creator</li>
+        <li class="item">@user.name</li>
+    </ul>
+</div>
+
+}
+

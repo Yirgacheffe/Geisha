@@ -1,7 +1,3 @@
-/**
-  * Created by koma on 5/10/16.
-  */
-
 object Op extends Enumeration {
 
   type Op = Value
@@ -21,23 +17,29 @@ import Op._
 case class WhereOp[T]( columnName: String, op: Op,  value: T )
 case class WhereIn[T]( columnName: String, val1: T, val2: T* )
 
-val wheres = Seq(
-  WhereIn( "state", "IL", "CA", "VA" ),
-  WhereOp( "state", EQ, "IL" ),
-  WhereOp( "name",  EQ, "Buck Trends"),
-  WhereOp( "age",   GT, 29   )
-)
+object MatchVariables {
 
-for ( where <- wheres ) {
+  def main( args: Array[String] ) = {
 
-  where match {
-    case WhereIn( col, val1, vals @ _* ) =>
-      val valStr = ( val1 +: vals ).mkString( ", " )
-      println( s"WHERE IN ( $valStr )" )
-    case WhereOp( col, op,   value     ) =>
-      println( s"WHERE $col $op $value" )
-    case _ =>
-      println( s"ERROR: Unknown expression $where" )
+    val wheres = Seq(
+      WhereIn("state", "IL", "CA", "VA"),
+      WhereOp("state", EQ, "IL"),
+      WhereOp("name", EQ, "Buck Trends"),
+      WhereOp("age", GT, 29)
+    )
+
+    for (where <- wheres) {
+
+      where match {
+        case WhereIn(col, val1, vals@_*) =>
+          val valStr = (val1 +: vals).mkString(", ")
+          println(s"WHERE IN ( $valStr )")
+        case WhereOp(col, op, value) =>
+          println(s"WHERE $col $op $value")
+        case _ =>
+          println(s"ERROR: Unknown expression $where")
+      }
+
+    }
   }
-
 }

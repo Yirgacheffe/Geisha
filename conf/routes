@@ -5,7 +5,7 @@
 # Home page
 GET         /                           controllers.UserController.list( page: Int ?= 1 )
 
-# User module
+# User module ---------------------------------------------------------------------------------
 GET         /users                      controllers.UserController.list( page: Int ?= 1 )
 GET         /users/$id<[0-9]+>          controllers.UserController.show(id: Int)
 
@@ -17,8 +17,13 @@ POST        /users/:id                  controllers.UserController.edit(id: Int)
 
 GET         /users/:id/delete           controllers.UserController.delete(id: Int)
 
-# Event module
-GET         /events                     controllers.EventController.list(page: Int ?= 1)
+
+
+# Event module --------------------------------------------------------------------------------
+GET         /events/$id<[0-9]+>         controllers.EventController.show(id: Int)
+
+
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

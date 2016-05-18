@@ -11,8 +11,8 @@ import play.api.data.Form
 import play.api.data.Forms._
 import scala.concurrent.ExecutionContext
 
-import models.User
 import dal.UserRepository
+import models.{ User, Gender }
 
 
 /**
@@ -20,19 +20,19 @@ import dal.UserRepository
  *
  * @version 1.0.0 $ 2016-04-26 22:46 $
  */
-case class UserData( email: String, password: String, phone: String, name: String, gender: Char,
-                     facebook: String,
-                     twitter:  String,
-                     linkedIn: String, wechat: String )
+case class UserEditEvent( phone: String, name: String, gender: Char,
+  facebook: String,
+  twitter:  String,
+  linkedIn: String, wechat: String )
+
+case class RegisterEvent( email: String, password: String )
 
 class UserController @Inject() ( val repo: UserRepository, val messagesApi: MessagesApi )
                                ( implicit ec: ExecutionContext ) extends Controller with I18nSupport {
 
 
-  val userForm: Form[UserData] = Form {
+  val userEditForm: Form[ UserEditEvent ] = Form {
     mapping(
-      "email"    -> nonEmptyText,
-      "password" -> nonEmptyText,
       "phone"    -> nonEmptyText,
       "name"     -> nonEmptyText,
       "gender"   -> char,
@@ -40,7 +40,14 @@ class UserController @Inject() ( val repo: UserRepository, val messagesApi: Mess
       "twitter"  -> text,
       "linkedIn" -> text,
       "wechat"   -> text
-    )( UserData.apply )( UserData.unapply )
+    ) ( UserEditEvent.apply )( UserEditEvent.unapply )
+  }
+
+  val registerForm: Form[ RegisterEvent ] = Form {
+    mapping (
+      "email"    -> email,
+      "password" -> nonEmptyText
+    ) ( RegisterEvent.apply )( RegisterEvent.unapply )
   }
 
 
@@ -49,95 +56,107 @@ class UserController @Inject() ( val repo: UserRepository, val messagesApi: Mess
    */
   def show( id: Int ) = Action.async {
     repo.findById( id ).map {
-      case user: User => Ok( views.html.user( "It works" )( user ) )
-      case None       => Ok( views.html.error( "User with id can not found" ) )
+      case Some(user) => Ok( views.html.user( user ) )
+      case None => Ok( views.html.error( "User with id can not found" ) )
     }
   }
 
 
+  /**
+   * Get user list by page
+   */
   def list( page: Int = 1 ) = Action.async {
-    repo.listByPage( page ).map {
-      case users: Seq[User] => Ok( views.html.users( "It works" )( users ) )
+    repo.listByPage(
+      page
+    ).map {
+      case users: Seq[User] => Ok( views.html.users(users) )
     }
   }
 
 
+  /**
+   * Render an user register form
+   */
   def showCreate() = Action {
-    Ok( views.html.userCreate( "It works" )( userForm ) )
+    Ok( views.html.register( registerForm ) )
   }
 
 
+  /**
+   * Register user
+   */
   def create() = Action.async { implicit request =>
-
-    userForm.bindFromRequest.fold (
-
+    registerForm.bindFromRequest.fold (
       errorForm => {
-        Future.successful( Ok(views.html.userCreate("With errors")(errorForm)) )
+        Future.successful( Ok(views.html.register(errorForm)) )
       },
-      u => { // u is UserData
-        repo.create( u.email, u.password,
-          u.phone,
-          u.name,
-          u.gender,
-          Some( u.facebook ),
-          Some( u.twitter  ),
-          Some( u.linkedIn ),
-          Some( u.wechat)  ).map { _ => Redirect( routes.UserController.list() )
-        }
+      u => {
+        repo.register(
+          u.email,
+          u.password
+        ).map( _ => Redirect(  routes.UserController.list())  )
       }
     )
-
   }
 
 
+  /**
+   * Remove a user
+   */
+  def delete( id: Int ) = Action.async {
+    repo.delete( id ).map { _ => Redirect( routes.UserController.list() ) }
+  }
+
+
+  /**
+   * Show edit form
+   */
   def showEdit( id: Int ) = Action.async {
 
     repo.findById( id ).map {
-      case user: User => {
+      case Some(u) => {
 
-        val userData = UserData(
-          user.email,
-          user.password,
-          user.phone,
-          user.name,
-          user.gender.abbr,
-          user.facebook.getOrElse(""),
-          user.twitter.getOrElse(""),
-          user.linkedIn.getOrElse(""),
-          user.wechat.getOrElse("")
+        val userEditData = UserEditEvent(
+          u.phone.getOrElse(""),
+          u.name.getOrElse(""),
+          Gender.toChar(u.gender),
+          u.facebook.getOrElse(""),
+          u.twitter.getOrElse(""),
+          u.linkedIn.getOrElse(""),
+          u.wechat.getOrElse("")
         )
 
-        val editForm = userForm.fill( userData )
-        Ok( views.html.userEdit( "It works" )( user.id )( editForm ) )
-
+        userEditForm.fill( userEditData )
+        Ok(views.html.userEdit(u.id.get)(userEditForm))
       }
-      case None => Ok( views.html.error( "User with id can not edit" ) )
+      case None => Ok( views.html.error( "No user found" ) )
     }
 
   }
 
 
+  /**
+   * Run edit action
+   */
   def edit( id: Int ) = Action.async { implicit request =>
 
-    userForm.bindFromRequest.fold (
+    userEditForm.bindFromRequest.fold (
+
       errorForm => {
-        Future.successful( Ok( views.html.userEdit( "With errors" )( id )( errorForm )) )
+        Future.successful( Ok( views.html.userEdit(id)(errorForm)) )
       },
       u => { // u is UserData
-        repo.edit( id, u.name, u.phone, u.name, u.gender,
-          Some( u.facebook ),
-          Some( u.twitter  ),
-          Some( u.linkedIn ),
-          Some( u.wechat ) ).map { _ => Redirect( routes.UserController.list() )
-        }
+        repo.update( id, u.name, u.phone,
+          u.gender,
+          u.facebook,
+          u.twitter,
+          u.linkedIn,
+          u.wechat
+        ).map { _ => Redirect( routes.UserController.list() ) }
       }
+
     )
-
   }
 
-
-  def delete( id: Int ) = Action {
-    Redirect( routes.UserController.list() )
-  }
 
 } //:~

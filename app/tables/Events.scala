@@ -28,17 +28,13 @@ class Events( tag: Tag ) extends Table[Event]( tag, "EVENTS" ) {
 
   def startTime   = column[Timestamp]( "START_TIME" )
   def closeTime   = column[Timestamp]( "CLOSE_TIME" )
-  def createdTime = column[Timestamp]( "TS_CREATED" )
-  def updatedTime = column[Timestamp]( "TS_UPDATED" )
 
 
-  def * = ( id, title, startTime, closeTime,
+  def * = ( id.?, title, startTime, closeTime,
     location,
     summary,
     cost,
-    category,
-    organizer,
-    creator, createdTime, updatedTime ) <> ( Event.tupled, Event.unapply )
+    category, organizer, creator ) <> ( Event.tupled, Event.unapply )
 
 
 } //:~

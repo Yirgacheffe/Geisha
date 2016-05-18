@@ -1,0 +1,17 @@
+@( user: Form[RegisterEvent] )( implicit messages: Messages )
+
+@import helper._
+
+@main( "Create User" ) {
+
+<ul id="user"></ul>
+    @form( routes.UserController.create() ) {
+
+        @inputText( user("email")     )
+        @inputText( user("password")  )
+
+        <div class="buttons">
+            <input type="submit" value="Add Person"/>
+        </div>
+    }
+}
