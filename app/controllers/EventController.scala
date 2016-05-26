@@ -37,4 +37,13 @@ class EventController @Inject() ( val eventDal: EventRepository, val messagesApi
   }
 
 
+  def list( page: Int = 1 ) = Action.async {
+    eventDal.listByPage(
+      page
+    ).map {
+      case events: Seq[Event] => Ok( views.html.events(events) )
+    }
+  }
+
+
 } //:~

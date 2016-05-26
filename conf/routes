@@ -18,11 +18,9 @@ POST        /users/:id                  controllers.UserController.edit(id: Int)
 GET         /users/:id/delete           controllers.UserController.delete(id: Int)
 
 
-
 # Event module --------------------------------------------------------------------------------
+GET         /events                     controllers.EventController.list( page: Int = 1 )
 GET         /events/$id<[0-9]+>         controllers.EventController.show(id: Int)
-
-
 
 
 # Map static resources from the /public folder to the /assets URL path

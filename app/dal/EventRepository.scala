@@ -32,6 +32,7 @@ class EventRepository @Inject()( dbConfigProvider: DatabaseConfigProvider )( imp
   private val events = TableQuery[ Events ]
   private val users  = TableQuery[ Users  ]
 
+  private val rowNum = 5
 
   private def eventsTableAutoInc = events returning events.map( _.id )
 
@@ -52,6 +53,11 @@ class EventRepository @Inject()( dbConfigProvider: DatabaseConfigProvider )( imp
     }
   }
 
+
+  def listByPage( page: Int = 1 ) : Future[ Seq[Event] ] = db.run {
+    val pageNum = if ( page <= 0 ) 1 else page
+    events.drop( (pageNum - 1) * rowNum ).take( rowNum + 1 ).result
+  }
 
 
 } //:~
