@@ -15,7 +15,7 @@ object RemoveBlanks {
 
   }
 
-  
+
   def main( args: Array[String] ) : Unit = {
 
     for {
