@@ -60,4 +60,9 @@ class EventRepository @Inject()( dbConfigProvider: DatabaseConfigProvider )( imp
   }
 
 
+  def delete( id: Int ) : Future[Int] = db.run {
+    events.filter( _.id === id ).delete
+  }
+
+
 } //:~

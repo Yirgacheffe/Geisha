@@ -45,5 +45,9 @@ class EventController @Inject() ( val eventDal: EventRepository, val messagesApi
     }
   }
 
+  def delete( id: Int ) = Action.async {
+    eventDal.delete( id ).map { _ => Redirect( reoutes.EventController.list() ) }
+  }
+
 
 } //:~
