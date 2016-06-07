@@ -36,6 +36,7 @@ class EventRepository @Inject()( dbConfigProvider: DatabaseConfigProvider )( imp
 
   private def eventsTableAutoInc = events returning events.map( _.id )
 
+
   def findById( id: Int ) : Future[Option[Event]] = db.run {
     events.filter( _.id === id ).result.headOption
   }

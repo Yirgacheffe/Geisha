@@ -27,8 +27,10 @@ case class UserEditEvent( phone: String, name: String, gender: Char,
 
 case class RegisterEvent( email: String, password: String )
 
+
 class UserController @Inject() ( val repo: UserRepository, val messagesApi: MessagesApi )
-                               ( implicit ec: ExecutionContext ) extends Controller with I18nSupport {
+                               ( implicit ec: ExecutionContext )
+  extends Controller with I18nSupport {
 
 
   val userEditForm: Form[ UserEditEvent ] = Form {

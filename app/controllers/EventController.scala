@@ -1,13 +1,14 @@
 //: controllers: EventController.scala
 package controllers
 
+import java.sql.Timestamp
 import javax.inject._
 
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api._
 import play.api.mvc._
-import scala.concurrent.ExecutionContext
 
+import scala.concurrent.ExecutionContext
 import models.Event
 import dal.EventRepository
 
@@ -17,8 +18,16 @@ import dal.EventRepository
  *
  * @version 1.0.0 $ 2016-04-27 22:55 $
  */
+case class EventEditForm( title: String, startTime: Timestamp, closeTime: Timestamp,
+  location : String,
+  summary  : String,
+  cost: Int, category: Int, organizer: Int )
+
+
 class EventController @Inject() ( val eventDal: EventRepository, val messagesApi: MessagesApi )
-                                ( implicit ec: ExecutionContext ) extends Controller with I18nSupport {
+                                ( implicit ec: ExecutionContext )
+  extends Controller with I18nSupport {
+
 
 /*
   def list( page: Int = 1 ) = Action.async {
